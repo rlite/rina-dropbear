@@ -92,6 +92,10 @@ static void printhelp(const char * progname) {
 					"-W <receive_window_buffer> (default %d, larger may be faster, max 1MB)\n"
 					"-K <keepalive>  (0 is never, default %d, in seconds)\n"
 					"-I <idle_timeout>  (0 is never, default %d, in seconds)\n"
+#ifdef HAVE_RLITE
+					"-A <application name> (application name to register to the DIF)\n"
+					"-D <DIF name> (name of the DIF to register to)\n"
+#endif
 					"-V    Version\n"
 #ifdef DEBUG_TRACE
 					"-v		verbose (compiled with DEBUG_TRACE)\n"
@@ -174,6 +178,14 @@ void svr_getopts(int argc, char ** argv) {
 
 		for (j = 1; (c = argv[i][j]) != '\0' && !next && !nextisport; j++) {
 			switch (c) {
+#ifdef HAVE_RLITE
+				case 'A':
+					next = &svr_opts.rina_appl_name;
+					break;
+				case 'D':
+					next = &svr_opts.rina_dif_name;
+					break;
+#endif
 				case 'b':
 					next = &svr_opts.bannerfile;
 					break;

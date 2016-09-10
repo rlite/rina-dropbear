@@ -229,8 +229,8 @@ static void main_noinetd() {
 				continue;
 
 			remoteaddrlen = sizeof(remoteaddr);
-			childsock = accept(listensocks[i], 
-					(struct sockaddr*)&remoteaddr, &remoteaddrlen);
+			childsock = dropbear_accept(listensocks[i],
+						&remoteaddr, &remoteaddrlen);
 
 			if (childsock < 0) {
 				/* accept failed */
@@ -410,6 +410,27 @@ static size_t listensockets(int *socks, size_t sockcount, int *maxfd) {
 	int nsock;
 
 	TRACE(("listensockets: %d to try", svr_opts.portcount))
+
+#ifdef HAVE_RLITE
+	if (svr_opts.rina_appl_name && svr_opts.rina_dif_name) {
+		nsock = dropbear_appl_register(svr_opts.rina_appl_name,
+					       svr_opts.rina_dif_name,
+					       &socks[sockpos],
+					       &errstring, maxfd);
+		if (nsock < 0) {
+			dropbear_log(LOG_WARNING,
+				"Failed to register '%s' in DIF '%s': %s",
+				svr_opts.rina_appl_name,
+				svr_opts.rina_dif_name, errstring);
+			m_free(errstring);
+			return sockpos;
+		}
+
+		sockpos += nsock;
+
+		return sockpos;
+	}
+#endif
 
 	for (i = 0; i < svr_opts.portcount; i++) {
 

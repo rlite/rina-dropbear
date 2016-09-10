@@ -31,6 +31,10 @@
 #include "auth.h"
 #include "tcpfwd.h"
 
+#ifdef HAVE_RLITE
+#include <rlite/api.h>
+#endif
+
 typedef struct runopts {
 
 #if defined(ENABLE_SVR_REMOTETCPFWD) || defined(ENABLE_CLI_LOCALTCPFWD) \
@@ -113,6 +117,11 @@ typedef struct svr_runopts {
 
 	buffer * banner;
 	char * pidfile;
+
+#ifdef HAVE_RLITE
+	char * rina_appl_name;
+	char * rina_dif_name;
+#endif
 
 } svr_runopts;
 

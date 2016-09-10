@@ -216,6 +216,9 @@
 /* Define to 1 if you have the `pututxline' function. */
 #undef HAVE_PUTUTXLINE
 
+/* rlite support */
+#undef HAVE_RLITE
+
 /* Define to 1 if you have the <security/pam_appl.h> header file. */
 #undef HAVE_SECURITY_PAM_APPL_H
 

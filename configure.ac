@@ -35,6 +35,8 @@ case "$host" in
 
 *-*-linux*)
 	no_ptmx_check=1
+	CFLAGS="$CFLAGS -DDEBUG_TRACE"
+	LDFLAGS="$LDFLAGS -DDEBUG_TRACE"
 	;;
 
 *-*-solaris*)
@@ -69,6 +71,16 @@ case "$host" in
 	AC_DEFINE(BROKEN_GETADDRINFO,,Broken getaddrinfo)
 	;;
 esac
+
+have_rlite=no
+AC_CHECK_LIB(rlite, rl_open, [
+		LIBS="$LIBS -lrlite"
+		have_rlite=yes
+		])
+
+if test "x$have_rlite" = "xyes" ; then
+	AC_DEFINE(HAVE_RLITE, 1, [rlite support])
+fi
 
 AC_CHECK_TOOL(AR, ar, :)
 AC_CHECK_TOOL(RANLIB, ranlib, :)

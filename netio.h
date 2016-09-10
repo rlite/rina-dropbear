@@ -20,6 +20,13 @@ void getaddrstring(struct sockaddr_storage* addr,
 		char **ret_host, char **ret_port, int host_lookup);
 int dropbear_listen(const char* address, const char* port,
 		int *socks, unsigned int sockcount, char **errstring, int *maxfd);
+int dropbear_accept(int sock, struct sockaddr_storage *remoteaddr,
+		    socklen_t *remoteaddrlen);
+#ifdef HAVE_RLITE
+#include <rlite/api.h>
+int dropbear_appl_register(const char* appl_name, const char* dif_name,
+			   int *socks, char **errstring, int *maxfd);
+#endif
 
 struct dropbear_progress_connection;
 

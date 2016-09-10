@@ -348,6 +348,80 @@ void set_sock_priority(int sock, enum dropbear_prio prio) {
 
 }
 
+#ifdef HAVE_RLITE
+int dropbear_appl_register(const char* appl_name, const char* dif_name,
+			   int *socks, char **errstring, int *maxfd)
+{
+        int rfd, ret;
+
+	rfd = rl_open(NULL);
+	if (rfd < 0) {
+		*errstring = strdup("rl_open() failed");
+	}
+
+	ret = rl_register(rfd, dif_name, appl_name);
+	if (ret) {
+		close(rfd);
+		*errstring = strdup("rl_register() failed");
+		return ret;
+	}
+
+	*socks = rfd;
+	*maxfd = MAX(*maxfd, *socks);
+
+	return 1; /* We always open a single listening file descriptor. */
+}
+#endif
+
+static int
+is_socket(int sock)
+{
+	struct sockaddr_storage addr;
+	socklen_t addrlen = sizeof(addr);
+	return getsockname(sock, (struct sockaddr *)&addr, &addrlen) == 0;
+}
+
+static void
+make_up_inaddr(int sock, struct sockaddr_storage *addr, socklen_t *addrlen)
+{
+	struct sockaddr_in *inaddr = (struct sockaddr_in *)addr;
+
+	memset(inaddr, 0, sizeof(*inaddr));
+	inaddr->sin_family = AF_INET;
+	inaddr->sin_port = htons((9000 + sock) & 0xffff);
+	inaddr->sin_addr.s_addr = htonl(0x0AA80000 + sock);
+	*addrlen = sizeof(*inaddr);
+}
+
+int dropbear_accept(int sock, struct sockaddr_storage *remoteaddr,
+		    socklen_t *remoteaddrlen)
+{
+	int fd = -1;
+
+	if (is_socket(sock)) {
+		/* This is a regular socket. */
+		return accept(sock, (struct sockaddr*)remoteaddr,
+			      remoteaddrlen);
+	}
+
+	/* This is not a socket. */
+#ifdef HAVE_RLITE
+	fd = rl_flow_accept(sock, NULL);
+	if (fd < 0) {
+		return fd;
+	}
+
+	{   /* Enable splitted sdu_write hack (max_sdu_size = 1400). */
+		uint8_t data[5]; data[0] = 90; *((uint32_t *)(data+1)) = 1400;
+		ioctl(fd, 0, data);
+	}
+
+	make_up_inaddr(sock, remoteaddr, remoteaddrlen);
+#endif
+
+	return fd;
+}
+
 /* Listen on address:port. 
  * Special cases are address of "" listening on everything,
  * and address of NULL listening on localhost only.
@@ -484,14 +558,18 @@ void get_socket_address(int fd, char **local_host, char **local_port,
 	
 	if (local_host || local_port) {
 		addrlen = sizeof(addr);
-		if (getsockname(fd, (struct sockaddr*)&addr, &addrlen) < 0) {
+		if (!is_socket(fd)) {
+			make_up_inaddr(fd, &addr, &addrlen);
+		} else if (getsockname(fd, (struct sockaddr*)&addr, &addrlen) < 0) {
 			dropbear_exit("Failed socket address: %s", strerror(errno));
 		}
 		getaddrstring(&addr, local_host, local_port, host_lookup);		
 	}
 	if (remote_host || remote_port) {
 		addrlen = sizeof(addr);
-		if (getpeername(fd, (struct sockaddr*)&addr, &addrlen) < 0) {
+		if (!is_socket(fd)) {
+			make_up_inaddr(fd, &addr, &addrlen);
+		} else if (getpeername(fd, (struct sockaddr*)&addr, &addrlen) < 0) {
 			dropbear_exit("Failed socket address: %s", strerror(errno));
 		}
 		getaddrstring(&addr, remote_host, remote_port, host_lookup);		

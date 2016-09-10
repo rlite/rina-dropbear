@@ -3445,6 +3445,8 @@ case "$host" in
 
 *-*-linux*)
 	no_ptmx_check=1
+	CFLAGS="$CFLAGS -DDEBUG_TRACE"
+	LDFLAGS="$LDFLAGS -DDEBUG_TRACE"
 	;;
 
 *-*-solaris*)
@@ -3572,6 +3574,57 @@ $as_echo "#define BROKEN_GETADDRINFO /**/" >>confdefs.h
 
 	;;
 esac
+
+have_rlite=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for rl_open in -lrlite" >&5
+$as_echo_n "checking for rl_open in -lrlite... " >&6; }
+if ${ac_cv_lib_rlite_rl_open+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lrlite  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char rl_open ();
+int
+main ()
+{
+return rl_open ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_rlite_rl_open=yes
+else
+  ac_cv_lib_rlite_rl_open=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rlite_rl_open" >&5
+$as_echo "$ac_cv_lib_rlite_rl_open" >&6; }
+if test "x$ac_cv_lib_rlite_rl_open" = xyes; then :
+
+		LIBS="$LIBS -lrlite"
+		have_rlite=yes
+
+fi
+
+
+if test "x$have_rlite" = "xyes" ; then
+
+$as_echo "#define HAVE_RLITE 1" >>confdefs.h
+
+fi
 
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}ar", so it can be a program name with args.
