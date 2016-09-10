@@ -274,7 +274,11 @@ static int newtcpforwarded(struct Channel * channel) {
 	}
 	
 	snprintf(portstring, sizeof(portstring), "%u", fwd->connectport);
-	channel->conn_pending = connect_remote(fwd->connectaddr, portstring, channel_connect_done, channel);
+	channel->conn_pending = connect_remote(fwd->connectaddr, portstring,
+#ifdef HAVE_RLITE
+						NULL,
+#endif
+					       channel_connect_done, channel);
 
 	channel->prio = DROPBEAR_CHANNEL_PRIO_UNKNOWABLE;
 	

@@ -173,6 +173,10 @@ typedef struct cli_runopts {
 #ifdef ENABLE_CLI_PROXYCMD
 	char *proxycmd;
 #endif
+
+#ifdef HAVE_RLITE
+	char *rina_dif_name;
+#endif
 } cli_runopts;
 
 extern cli_runopts cli_opts;

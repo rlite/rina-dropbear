@@ -9,6 +9,9 @@ struct dropbear_progress_connection {
 	struct addrinfo *res_iter;
 
 	char *remotehost, *remoteport; /* For error reporting */
+#ifdef HAVE_RLITE
+	char *rina_dif_name;
+#endif
 
 	connect_callback cb;
 	void *cb_data;
@@ -49,12 +52,45 @@ void cancel_connect(struct dropbear_progress_connection *c) {
 	c->cb_data = NULL;
 }
 
+#ifdef HAVE_RLITE
+static inline void
+splitted_sdu_write_hack(int fd) {
+	/* Enable splitted sdu_write hack (max_sdu_size = 1400). */
+	uint8_t data[5]; data[0] = 90; *((uint32_t *)(data+1)) = 1400;
+	ioctl(fd, 0, data);
+}
+#endif
+
 static void connect_try_next(struct dropbear_progress_connection *c) {
 	struct addrinfo *r;
 	int res = 0;
 	int fastopen = 0;
 #ifdef DROPBEAR_CLIENT_TCP_FAST_OPEN
 	struct msghdr message;
+#endif
+
+#ifdef HAVE_RLITE
+	if (c->rina_dif_name) {
+		struct rl_flow_spec flowspec;
+
+		/* Allocate a reliable flow. */
+		rl_flow_spec_default(&flowspec);
+		flowspec.max_sdu_gap = 0;
+		flowspec.flow_control = 1;
+		c->sock = rl_flow_alloc(c->rina_dif_name, "dropbear/client",
+					c->remotehost, &flowspec);
+		c->res_iter = NULL;
+		if (c->sock < 0) {
+			c->errstring = m_strdup(strerror(errno));
+			dropbear_log(LOG_WARNING, "rl_flow_alloc() --> %d: %s",
+						c->sock, c->errstring);
+			return;
+		}
+		splitted_sdu_write_hack(c->sock);
+		ses.maxfd = MAX(ses.maxfd, c->sock);
+		setnonblocking(c->sock);
+		return;
+	}
 #endif
 
 	for (r = c->res_iter; r; r = r->ai_next)
@@ -130,6 +166,9 @@ static void connect_try_next(struct dropbear_progress_connection *c) {
 
 /* Connect via TCP to a host. */
 struct dropbear_progress_connection *connect_remote(const char* remotehost, const char* remoteport,
+#ifdef HAVE_RLITE
+	const char *dif_name,
+#endif
 	connect_callback cb, void* cb_data)
 {
 	struct dropbear_progress_connection *c = NULL;
@@ -145,6 +184,13 @@ struct dropbear_progress_connection *connect_remote(const char* remotehost, cons
 
 	list_append(&ses.conn_pending, c);
 
+#ifdef HAVE_RLITE
+	if (dif_name) {
+		c->rina_dif_name = m_strdup(dif_name);
+		c->res_iter = c->res = m_malloc(sizeof(struct addrinfo));
+		return c;
+	}
+#endif
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_family = AF_UNSPEC;
@@ -197,6 +243,14 @@ void set_connect_fds(fd_set *writefd) {
 	}
 }
 
+static int
+is_socket(int sock)
+{
+	struct sockaddr_storage addr;
+	socklen_t addrlen = sizeof(addr);
+	return getsockname(sock, (struct sockaddr *)&addr, &addrlen) == 0;
+}
+
 void handle_connect_fds(fd_set *writefd) {
 	m_list_elem *iter;
 	TRACE(("enter handle_connect_fds"))
@@ -211,12 +265,12 @@ void handle_connect_fds(fd_set *writefd) {
 
 		TRACE(("handling %s port %s socket %d", c->remotehost, c->remoteport, c->sock));
 
-		if (getsockopt(c->sock, SOL_SOCKET, SO_ERROR, &val, &vallen) != 0) {
+		if (is_socket(c->sock) && getsockopt(c->sock, SOL_SOCKET, SO_ERROR, &val, &vallen) != 0) {
 			TRACE(("handle_connect_fds getsockopt(%d) SO_ERROR failed: %s", c->sock, strerror(errno)))
 			/* This isn't expected to happen - Unix has surprises though, continue gracefully. */
 			m_close(c->sock);
 			c->sock = -1;
-		} else if (val != 0) {
+		} else if (is_socket(c->sock) && val != 0) {
 			/* Connect failed */
 			TRACE(("connect to %s port %s failed.", c->remotehost, c->remoteport))
 			m_close(c->sock);
@@ -373,14 +427,6 @@ int dropbear_appl_register(const char* appl_name, const char* dif_name,
 }
 #endif
 
-static int
-is_socket(int sock)
-{
-	struct sockaddr_storage addr;
-	socklen_t addrlen = sizeof(addr);
-	return getsockname(sock, (struct sockaddr *)&addr, &addrlen) == 0;
-}
-
 static void
 make_up_inaddr(int sock, struct sockaddr_storage *addr, socklen_t *addrlen)
 {
@@ -411,12 +457,9 @@ int dropbear_accept(int sock, struct sockaddr_storage *remoteaddr,
 		return fd;
 	}
 
-	{   /* Enable splitted sdu_write hack (max_sdu_size = 1400). */
-		uint8_t data[5]; data[0] = 90; *((uint32_t *)(data+1)) = 1400;
-		ioctl(fd, 0, data);
-	}
-
+	splitted_sdu_write_hack(fd);
 	make_up_inaddr(sock, remoteaddr, remoteaddrlen);
+	dropbear_log(LOG_WARNING, "rl_flow_accept() --> %d", fd);
 #endif
 
 	return fd;
