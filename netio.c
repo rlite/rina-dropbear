@@ -71,18 +71,18 @@ static void connect_try_next(struct dropbear_progress_connection *c) {
 
 #ifdef HAVE_RLITE
 	if (c->rina_dif_name) {
-		struct rl_flow_spec flowspec;
+		struct rina_flow_spec flowspec;
 
 		/* Allocate a reliable flow. */
-		rl_flow_spec_default(&flowspec);
+		rina_flow_spec_default(&flowspec);
 		flowspec.max_sdu_gap = 0;
 		flowspec.flow_control = 1;
-		c->sock = rl_flow_alloc(c->rina_dif_name, "dropbear/client",
+		c->sock = rina_flow_alloc(c->rina_dif_name, "dropbear/client",
 					c->remotehost, &flowspec);
 		c->res_iter = NULL;
 		if (c->sock < 0) {
 			c->errstring = m_strdup(strerror(errno));
-			dropbear_log(LOG_WARNING, "rl_flow_alloc() --> %d: %s",
+			dropbear_log(LOG_WARNING, "rina_flow_alloc() --> %d: %s",
 						c->sock, c->errstring);
 			return;
 		}
@@ -408,15 +408,15 @@ int dropbear_appl_register(const char* appl_name, const char* dif_name,
 {
         int rfd, ret;
 
-	rfd = rl_open(NULL);
+	rfd = rina_open();
 	if (rfd < 0) {
-		*errstring = strdup("rl_open() failed");
+		*errstring = strdup("rina_open() failed");
 	}
 
-	ret = rl_register(rfd, dif_name, appl_name);
+	ret = rina_register(rfd, dif_name, appl_name);
 	if (ret) {
 		close(rfd);
-		*errstring = strdup("rl_register() failed");
+		*errstring = strdup("rina_register() failed");
 		return ret;
 	}
 
@@ -452,14 +452,14 @@ int dropbear_accept(int sock, struct sockaddr_storage *remoteaddr,
 
 	/* This is not a socket. */
 #ifdef HAVE_RLITE
-	fd = rl_flow_accept(sock, NULL);
+	fd = rina_flow_accept(sock, NULL);
 	if (fd < 0) {
 		return fd;
 	}
 
 	splitted_sdu_write_hack(fd);
 	make_up_inaddr(sock, remoteaddr, remoteaddrlen);
-	dropbear_log(LOG_WARNING, "rl_flow_accept() --> %d", fd);
+	dropbear_log(LOG_WARNING, "rina_flow_accept() --> %d", fd);
 #endif
 
 	return fd;

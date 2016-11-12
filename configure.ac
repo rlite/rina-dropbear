@@ -73,7 +73,7 @@ case "$host" in
 esac
 
 have_rlite=no
-AC_CHECK_LIB(rlite, rl_open, [
+AC_CHECK_LIB(rlite, rina_open, [
 		LIBS="$LIBS -lrlite"
 		have_rlite=yes
 		])
