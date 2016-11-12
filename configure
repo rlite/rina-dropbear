@@ -3592,27 +3592,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char rl_open ();
+char rina_open ();
 int
 main ()
 {
-return rl_open ();
+return rina_open ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_rlite_rl_open=yes
+  ac_cv_lib_rlite_rina_open=yes
 else
-  ac_cv_lib_rlite_rl_open=no
+  ac_cv_lib_rlite_rina_open=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rlite_rl_open" >&5
-$as_echo "$ac_cv_lib_rlite_rl_open" >&6; }
-if test "x$ac_cv_lib_rlite_rl_open" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rlite_rina_open" >&5
+$as_echo "$ac_cv_lib_rlite_rina_open" >&6; }
+if test "x$ac_cv_lib_rlite_rina_open" = xyes; then :
 
 		LIBS="$LIBS -lrlite"
 		have_rlite=yes
