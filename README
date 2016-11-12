@@ -11,7 +11,7 @@ background, add the -v, -E and -F options.
 
 Example of gateway configuration line (if needed):
 
-    SRV n.1.DIF dropbear/1//  0.0.0.0 7777
+    SRV n.1.DIF dropbear/1  0.0.0.0 7777
 ==================================================================
 
 INSTALL has compilation instructions.
