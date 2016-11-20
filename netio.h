@@ -23,7 +23,7 @@ int dropbear_listen(const char* address, const char* port,
 int dropbear_accept(int sock, struct sockaddr_storage *remoteaddr,
 		    socklen_t *remoteaddrlen);
 #ifdef HAVE_RLITE
-#include <rlite/api.h>
+#include <rina/api.h>
 int dropbear_appl_register(const char* appl_name, const char* dif_name,
 			   int *socks, char **errstring, int *maxfd);
 #endif

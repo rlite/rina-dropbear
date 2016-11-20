@@ -76,7 +76,7 @@ static void connect_try_next(struct dropbear_progress_connection *c) {
 		/* Allocate a reliable flow. */
 		rina_flow_spec_default(&flowspec);
 		flowspec.max_sdu_gap = 0;
-		flowspec.flow_control = 1;
+		flowspec.reserved[38] = 1;
 		c->sock = rina_flow_alloc(c->rina_dif_name, "dropbear/client",
 					c->remotehost, &flowspec);
 		c->res_iter = NULL;

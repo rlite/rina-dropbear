@@ -32,7 +32,7 @@
 #include "tcpfwd.h"
 
 #ifdef HAVE_RLITE
-#include <rlite/api.h>
+#include <rina/api.h>
 #endif
 
 typedef struct runopts {
