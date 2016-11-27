@@ -76,9 +76,9 @@ static void connect_try_next(struct dropbear_progress_connection *c) {
 		/* Allocate a reliable flow. */
 		rina_flow_spec_default(&flowspec);
 		flowspec.max_sdu_gap = 0;
-		flowspec.reserved[38] = 1;
+		flowspec.reserved[36] = 1;
 		c->sock = rina_flow_alloc(c->rina_dif_name, "dropbear/client",
-					c->remotehost, &flowspec);
+					c->remotehost, &flowspec, 0);
 		c->res_iter = NULL;
 		if (c->sock < 0) {
 			c->errstring = m_strdup(strerror(errno));
@@ -452,7 +452,7 @@ int dropbear_accept(int sock, struct sockaddr_storage *remoteaddr,
 
 	/* This is not a socket. */
 #ifdef HAVE_RLITE
-	fd = rina_flow_accept(sock, NULL);
+	fd = rina_flow_accept(sock, NULL, NULL, 0);
 	if (fd < 0) {
 		return fd;
 	}
