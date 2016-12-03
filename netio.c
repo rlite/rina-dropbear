@@ -57,7 +57,7 @@ static inline void
 splitted_sdu_write_hack(int fd) {
 	/* Enable splitted sdu_write hack (max_sdu_size = 1400). */
 	uint8_t data[5]; data[0] = 90; *((uint32_t *)(data+1)) = 1400;
-	ioctl(fd, 0, data);
+	ioctl(fd, 1, data);
 }
 #endif
 
