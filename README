@@ -4,14 +4,14 @@ https://matt.ucc.asn.au/dropbear/dropbear.html
 ==================================================================
 To run with rlite, run with options similar to the following ones:
 
-    $ dropbear -R -A dropbear/1 -D n.1.DIF
+    $ dropbear -R -A dropbear:1 -D n.1.DIF
 
 To get more verbose output, get that on stderr, and don't fork to
 background, add the -v, -E and -F options.
 
 Example of gateway configuration line (if needed):
 
-    SRV n.1.DIF dropbear/1  0.0.0.0 7777
+    I2R n.1.DIF dropbear:1  0.0.0.0 7777
 ==================================================================
 
 INSTALL has compilation instructions.
