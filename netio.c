@@ -52,15 +52,6 @@ void cancel_connect(struct dropbear_progress_connection *c) {
 	c->cb_data = NULL;
 }
 
-#ifdef HAVE_RLITE
-static inline void
-splitted_sdu_write_hack(int fd) {
-	/* Enable splitted sdu_write hack (max_sdu_size = 1400). */
-	uint8_t data[5]; data[0] = 90; *((uint32_t *)(data+1)) = 1400;
-	ioctl(fd, 1, data);
-}
-#endif
-
 static void connect_try_next(struct dropbear_progress_connection *c) {
 	struct addrinfo *r;
 	int res = 0;
@@ -86,7 +77,6 @@ static void connect_try_next(struct dropbear_progress_connection *c) {
 						c->sock, c->errstring);
 			return;
 		}
-		splitted_sdu_write_hack(c->sock);
 		ses.maxfd = MAX(ses.maxfd, c->sock);
 		setnonblocking(c->sock);
 		return;
@@ -457,7 +447,6 @@ int dropbear_accept(int sock, struct sockaddr_storage *remoteaddr,
 		return fd;
 	}
 
-	splitted_sdu_write_hack(fd);
 	make_up_inaddr(sock, remoteaddr, remoteaddrlen);
 	dropbear_log(LOG_WARNING, "rina_flow_accept() --> %d", fd);
 #endif
