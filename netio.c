@@ -64,10 +64,12 @@ static void connect_try_next(struct dropbear_progress_connection *c) {
 	if (c->rina_dif_name) {
 		struct rina_flow_spec flowspec;
 
-		/* Allocate a reliable flow. */
+		/* Allocate a reliable flow without message boundaries. */
 		rina_flow_spec_default(&flowspec);
 		flowspec.max_sdu_gap = 0;
-		flowspec.reserved[36] = 1;
+		flowspec.in_order_delivery = 1;
+		flowspec.msg_boundaries = 0;
+		flowspec.reserved[35] = 1;
 		c->sock = rina_flow_alloc(c->rina_dif_name, "dropbear/client",
 					c->remotehost, &flowspec, 0);
 		c->res_iter = NULL;
