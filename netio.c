@@ -405,7 +405,7 @@ int dropbear_appl_register(const char* appl_name, const char* dif_name,
 		*errstring = strdup("rina_open() failed");
 	}
 
-	ret = rina_register(rfd, dif_name, appl_name);
+	ret = rina_register(rfd, dif_name, appl_name, 0);
 	if (ret) {
 		close(rfd);
 		*errstring = strdup("rina_register() failed");
