@@ -11,7 +11,7 @@ background, add the -v, -E and -F options.
 
 Example of gateway configuration line (if needed):
 
-    I2R n.DIF dropbear.1  0.0.0.0 7777
+    I2R n.DIF dropbear.1  0.0.0.0 2200
 ==================================================================
 
 INSTALL has compilation instructions.
