@@ -9,7 +9,7 @@ struct dropbear_progress_connection {
 	struct addrinfo *res_iter;
 
 	char *remotehost, *remoteport; /* For error reporting */
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 	char *rina_dif_name;
 #endif
 
@@ -60,7 +60,7 @@ static void connect_try_next(struct dropbear_progress_connection *c) {
 	struct msghdr message;
 #endif
 
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 	if (c->rina_dif_name) {
 		struct rina_flow_spec flowspec;
 
@@ -158,7 +158,7 @@ static void connect_try_next(struct dropbear_progress_connection *c) {
 
 /* Connect via TCP to a host. */
 struct dropbear_progress_connection *connect_remote(const char* remotehost, const char* remoteport,
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 	const char *dif_name,
 #endif
 	connect_callback cb, void* cb_data)
@@ -176,7 +176,7 @@ struct dropbear_progress_connection *connect_remote(const char* remotehost, cons
 
 	list_append(&ses.conn_pending, c);
 
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 	if (dif_name) {
 		c->rina_dif_name = m_strdup(dif_name);
 		c->res_iter = c->res = m_malloc(sizeof(struct addrinfo));
@@ -394,7 +394,7 @@ void set_sock_priority(int sock, enum dropbear_prio prio) {
 
 }
 
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 int dropbear_appl_register(const char* appl_name, const char* dif_name,
 			   int *socks, char **errstring, int *maxfd)
 {
@@ -443,7 +443,7 @@ int dropbear_accept(int sock, struct sockaddr_storage *remoteaddr,
 	}
 
 	/* This is not a socket. */
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 	fd = rina_flow_accept(sock, NULL, NULL, 0);
 	if (fd < 0) {
 		return fd;

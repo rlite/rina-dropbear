@@ -92,7 +92,7 @@ static void printhelp() {
 					"-c <cipher list> Specify preferred ciphers ('-c help' to list options)\n"
 					"-m <MAC list> Specify preferred MACs for packet verification (or '-m help')\n"
 #endif
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
                                         "-D <dif name> Name of the DIF to use to allocate a flow\n"
 #endif
 					"-V    Version\n"
@@ -306,7 +306,7 @@ void cli_getopts(int argc, char ** argv) {
 				case 'm':
 #endif
 				case 'D':
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 					next = &cli_opts.rina_dif_name;
 					break;
 #endif

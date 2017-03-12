@@ -3575,14 +3575,14 @@ $as_echo "#define BROKEN_GETADDRINFO /**/" >>confdefs.h
 	;;
 esac
 
-have_rlite=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for rina_open in -lrlite" >&5
-$as_echo_n "checking for rina_open in -lrlite... " >&6; }
-if ${ac_cv_lib_rlite_rina_open+:} false; then :
+have_rina=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for rina_open in -lrina-api" >&5
+$as_echo_n "checking for rina_open in -lrina-api... " >&6; }
+if ${ac_cv_lib_rina_api_rina_open+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lrlite  $LIBS"
+LIBS="-lrina-api  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -3602,27 +3602,27 @@ return rina_open ();
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_rlite_rina_open=yes
+  ac_cv_lib_rina_api_rina_open=yes
 else
-  ac_cv_lib_rlite_rina_open=no
+  ac_cv_lib_rina_api_rina_open=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rlite_rina_open" >&5
-$as_echo "$ac_cv_lib_rlite_rina_open" >&6; }
-if test "x$ac_cv_lib_rlite_rina_open" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rina_api_rina_open" >&5
+$as_echo "$ac_cv_lib_rina_api_rina_open" >&6; }
+if test "x$ac_cv_lib_rina_api_rina_open" = xyes; then :
 
-		LIBS="$LIBS -lrlite"
-		have_rlite=yes
+		LIBS="$LIBS -lrina-api"
+		have_rina=yes
 
 fi
 
 
-if test "x$have_rlite" = "xyes" ; then
+if test "x$have_rina" = "xyes" ; then
 
-$as_echo "#define HAVE_RLITE 1" >>confdefs.h
+$as_echo "#define HAVE_RINA 1" >>confdefs.h
 
 fi
 

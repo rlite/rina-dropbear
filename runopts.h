@@ -31,7 +31,7 @@
 #include "auth.h"
 #include "tcpfwd.h"
 
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 #include <rina/api.h>
 #endif
 
@@ -118,7 +118,7 @@ typedef struct svr_runopts {
 	buffer * banner;
 	char * pidfile;
 
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 	char * rina_appl_name;
 	char * rina_dif_name;
 #endif
@@ -174,7 +174,7 @@ typedef struct cli_runopts {
 	char *proxycmd;
 #endif
 
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 	char *rina_dif_name;
 #endif
 } cli_runopts;

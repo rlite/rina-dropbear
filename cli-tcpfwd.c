@@ -275,7 +275,7 @@ static int newtcpforwarded(struct Channel * channel) {
 	
 	snprintf(portstring, sizeof(portstring), "%u", fwd->connectport);
 	channel->conn_pending = connect_remote(fwd->connectaddr, portstring,
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 						NULL,
 #endif
 					       channel_connect_done, channel);

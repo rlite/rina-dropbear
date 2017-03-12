@@ -72,14 +72,14 @@ case "$host" in
 	;;
 esac
 
-have_rlite=no
-AC_CHECK_LIB(rlite, rina_open, [
-		LIBS="$LIBS -lrlite"
-		have_rlite=yes
+have_rina=no
+AC_CHECK_LIB(rina-api, rina_open, [
+		LIBS="$LIBS -lrina-api"
+		have_rina=yes
 		])
 
-if test "x$have_rlite" = "xyes" ; then
-	AC_DEFINE(HAVE_RLITE, 1, [rlite support])
+if test "x$have_rina" = "xyes" ; then
+	AC_DEFINE(HAVE_RINA, 1, [rina support])
 fi
 
 AC_CHECK_TOOL(AR, ar, :)

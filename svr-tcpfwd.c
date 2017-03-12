@@ -271,7 +271,7 @@ static int newtcpdirect(struct Channel * channel) {
 
 	snprintf(portstring, sizeof(portstring), "%u", destport);
 	channel->conn_pending = connect_remote(desthost, portstring,
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 						NULL,
 #endif
 						channel_connect_done, channel);

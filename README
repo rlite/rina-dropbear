@@ -2,7 +2,8 @@ This is Dropbear, a smallish SSH server and client.
 https://matt.ucc.asn.au/dropbear/dropbear.html
 
 ==================================================================
-To run with rlite, run with options similar to the following ones:
+To run with rlite (or IRATI), run with options similar to the
+following ones:
 
     $ dropbear -R -A dropbear.1 -D n.DIF
 

@@ -87,7 +87,7 @@ int main(int argc, char ** argv) {
 #endif
 	{
 		progress = connect_remote(cli_opts.remotehost, cli_opts.remoteport,
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 				cli_opts.rina_dif_name,
 #endif
 				cli_connected, &ses);

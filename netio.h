@@ -22,7 +22,7 @@ int dropbear_listen(const char* address, const char* port,
 		int *socks, unsigned int sockcount, char **errstring, int *maxfd);
 int dropbear_accept(int sock, struct sockaddr_storage *remoteaddr,
 		    socklen_t *remoteaddrlen);
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 #include <rina/api.h>
 int dropbear_appl_register(const char* appl_name, const char* dif_name,
 			   int *socks, char **errstring, int *maxfd);
@@ -36,7 +36,7 @@ typedef void(*connect_callback)(int result, int sock, void* data, const char* er
 
 /* Always returns a progress connection, if it fails it will call the callback at a later point */
 struct dropbear_progress_connection * connect_remote (const char* remotehost, const char* remoteport,
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 	const char *dif_name,
 #endif
 	connect_callback cb, void *cb_data);

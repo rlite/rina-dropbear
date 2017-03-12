@@ -411,7 +411,7 @@ static size_t listensockets(int *socks, size_t sockcount, int *maxfd) {
 
 	TRACE(("listensockets: %d to try", svr_opts.portcount))
 
-#ifdef HAVE_RLITE
+#ifdef HAVE_RINA
 	if (svr_opts.rina_appl_name && svr_opts.rina_dif_name) {
 		nsock = dropbear_appl_register(svr_opts.rina_appl_name,
 					       svr_opts.rina_dif_name,
