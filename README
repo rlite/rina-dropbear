@@ -2,10 +2,13 @@ This is Dropbear, a smallish SSH server and client.
 https://matt.ucc.asn.au/dropbear/dropbear.html
 
 ==================================================================
-To run with rlite (or IRATI), run with options similar to the
-following ones:
+To use with rlite (or IRATI), run ./configure and build in the
+usual way. Make sure the /etc/dropbear directory is present on the
+file system.
 
-    $ dropbear -R -A dropbear.1 -D n.DIF
+Run the dropbear server with options similar to the following ones:
+
+    $ sudo dropbear -R -A dropbear.1 -D n.DIF
 
 To get more verbose output, get that on stderr, and don't fork to
 background, add the -v, -E and -F options.
@@ -13,6 +16,12 @@ background, add the -v, -E and -F options.
 Example of gateway configuration line (if needed):
 
     I2R n.DIF dropbear.1  0.0.0.0 2200
+
+To access the server directly from a RINA network, you can use
+a client-side command similar to the following one:
+
+    $ dbclient -D n.DIF username@dropbear.1
+
 ==================================================================
 
 INSTALL has compilation instructions.
