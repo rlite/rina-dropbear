@@ -13,7 +13,6 @@ script:
   - "popd"
   - "pushd ."
   - "./configure"
-  - "grep HAVE_RINA config.log | grep '\<1\>'"
   - "make"
   - "sudo make install"
   - "popd"
